@@ -1,6 +1,6 @@
 # Introduction
 
-Demo project to play around with Spring boot, kotlin, docker and kubernetes.
+Demo project to play around with SpringBoot, kotlin, docker, kubernetes and helm.
 
 For this I am using mac with desktop version of docker and make sure to enable kubernetes
 in docker preferences.
@@ -70,17 +70,50 @@ eq., chan/springboot-webdemo and latest
     rest api: http://localhost:8080/greeting?name=chan2
 
 
-# Clean up
+# Clean up for kubernetes
+
+1. Removing kubernetes deployment
+
+```shell script
+$ kubectl delete deployment my-app
+$ kubectl delete svc my-appdd
+```
+
+# Configure helm charts using local docker image
+
+We going to configure docker image created locally "chan/springboot-webdemo".
+
+1. Install the helms
+
+```shell script
+$ helm install example3 ./springbootwebdemo
+```
+
+2. Execute all commands listed in console
+
+example:
+
+```shell script
+  $ export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=springbootwebdemo,app.kubernetes.io/instance=example3" -o jsonpath="{.items[0].metadata.name}")
+  $ kubectl --namespace default port-forward $POD_NAME 8080:8080
+```
+
+Test the application by accessing below url
+
+web: http://127.0.0.1:8080
+
+rest api: http://127.0.0.1:8080/greeting?name=chan2
+
+# Clean up helm installs
+
+```shell script
+$ helm uninstall example3
+```
+
+# Clean up for docker
 
 1. Removing docker images
 
 ```shell script
 $ docker rmi chan/springboot-webdemo --force
-```
-
-2. Removing kubernetes deployment
-
-```shell script
-$ kubectl delete deployment my-app
-$ kubectl delete svc my-appdd
 ```
